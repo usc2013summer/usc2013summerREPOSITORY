@@ -16,6 +16,7 @@ extern Lock* readingLock[];
 extern Condition* readingCV[];
 extern Lock* tipLock[];
 extern Condition* tipCV[];
+extern List* leavingQ;
 
 Driver::Driver(int newDriverID){
 	driverID = newDriverID;
@@ -23,8 +24,12 @@ Driver::Driver(int newDriverID){
 	count = 0;
 }
 
-void Driver::serDriver(Driver* newDriver){
-	driver = newDriver;
+void Driver::setMyValet(int newMyValet){
+	myValet = newMyValet;
+}
+
+void Driver::setMyToken(int newMyToken){
+	myToken = newMyToken;
 }
 
 void Driver::setLockCV(Lock* newCarLock, Condition* newCarCV){
@@ -48,6 +53,14 @@ int Driver::getCarID(){
 	return carID;
 }
 
+char* Driver::getCarModel(){
+	return carModel;
+}
+
+int Driver::getDriverID(){
+	return driverID;
+}
+
 void Driver::arrived(){
 	carLock->Acquire();
 	carCV->Broadcast(carLock);
@@ -65,6 +78,12 @@ void Driver::tellVisitorsGetOut(){
 	}
 }
 
+void Driver::playMuseum(){
+	int random = rand() % 51 + 50;
+    for(int i=0; i<random; i++)
+		currentThread->Yield();
+}
+
 void Driver::oneVisitorOutFromCar(){
 	count++;
 	carLock->Acquire();
@@ -75,10 +94,12 @@ void Driver::oneVisitorOutFromCar(){
 void driverThread(int newDriver){
 	Driver* driver = (Driver*)newDriver;
 	int myIndex = driver->getCarID();
+	int myValet, myToken;
 	
 	driver->arrived();
 	driver->tellVisitorsGetOut();
 	
+	///// INTERACTION WITH VALET START /////
 	// interaction with valet
 	lineLock->Acquire();
 
@@ -105,6 +126,7 @@ void driverThread(int newDriver){
     //AFTER EVERYONE HAS EXIT THE CAR
 
     //Give the key to the Valet
+	printf("%s Driver %d has given their keys to Parking Valet %d for Car %d\n", driver->getCarModel(), driver->getDriverID(), myValet, driver->getCarID());
     keyLock[myIndex]->Acquire();
     vehicleLock[myIndex]->Release();
     keyCV->Signal(keyLock[myIndex]);
@@ -113,22 +135,33 @@ void driverThread(int newDriver){
     tokenLock[myIndex]->Acquire();
     keyLock[myIndex]->Release();
     tokenCV[myIndex]->Wait(tokenLock[myIndex]);
-
+	
     readingLock[myIndex]->Acquire();
     myToken = parkingToken;
     tokenLock[myIndex]->Release();
     readingCV[myIndex]->Signal(readingLock[myIndex]);
-
+	printf("%s Driver %d has received Parking Token %d from Parking Valet %d for Car %d\n", driver->getCarModel(), driver->getDriverID(), myToken, myValet, driver->getCarID());
+	readingLock[myIndex]->Release();
+	///// INTERACTION WITH VALET END /////
+	
+	///// INTERACTION WITH TICKET TAKER START /////
+	
+	
+	///// INTERACTION WITH TICKET TAKER END /////
+	
+	
     //Go play in the museum
-    readingLock[myIndex]->Release();
-    int r = rand() % 51 + 50;
-    for(int i=0; i<rand; i++)
-		currentThread->Yield();
-
-    //AFTER EVERYONE IN MY CAR HAS GOT OUT OF THE MUSEUM
-    //NOW I NEED TO TALK TO THE VALET AND PICK UP MY CAR
-
-
+	if( driver->getCarModel() == "Car" )
+		driver->playMuseum();
+	else if( driver->getCarModle() == "Limousine" )
+		// Hang Around
+		
+		
+	///// INTERACTION WITH VALET START /////
+	//AFTER EVERYONE IN MY CAR HAS GOT OUT OF THE MUSEUM
+    printf("%s Driver %d has been notified that all their Visitors have left the Museum for Car %d\n", driver->getCarModel(), driver->getDriverID(), driver->getCarID());
+	
+	//NOW I NEED TO TALK TO THE VALET AND PICK UP MY CAR
     lineLock->Acquire();
     //Put myself on the leaving queue
     leavingQ->Append(d);
@@ -137,12 +170,15 @@ void driverThread(int newDriver){
 		valetQ->Remove();
         lineCV->Signal(lineLock);
     }
-
+	
+	printf("%s Driver %d has given Parking Token %d to Parking Valet %d for Car %d\n", driver->getCarModel(), driver->getDriverID(), myToken, myValet, driver->getCarID());
     //Wait for the valet to get the token from me
     tokenLock[myIndex]->Acquire();
     lineLock->Release();
     tokenCV[myIndex]->Wait(tokenLock[myIndex]);     //Wait until approached by Valet
-
+	
+	printf("%s Driver %d has received their keys from Parking Valet %d for Car %d\n", driver->getCarModel(), driver->getDriverID(), myValet, driver->getCarID());
+	
     //Take the car and give tip
     tipLock[myIndex]->Acquire();
     tokenLock[myIndex]->Release();
@@ -150,4 +186,6 @@ void driverThread(int newDriver){
     tipLock[myIndex]->Release();
 
 	//Go home
+	printf("%s Driver %d has left the Museum in Car %d\n", driver->getCarModel(), driver->getDriverID(), driver->getCarID());
+	///// INTERACTION WITH VALET END /////
 }

@@ -6,7 +6,6 @@
 
 class Visitor{
 	private:
-		Visitor* visitor;
 		int visitorID;
 		int myTicketTakerID;
 		Lock* carLock;
@@ -16,7 +15,6 @@ class Visitor{
 	public:
 		// Constructor, Setter, Getter
 		Visitor(int);
-		void setVisitor(Visitor*);
 		void setLockCV(Lock*, Condition*);
 		void setMyDriver(Driver*);
 		void setMyTicketTakerID(int);

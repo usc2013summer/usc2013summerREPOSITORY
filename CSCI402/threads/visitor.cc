@@ -6,10 +6,6 @@ Visitor::Visitor(int newVisitorID){
 	visitorID = newVisitorID;
 }
 
-void Visitor::setVisitor(Visitor* newVisitor){
-	visitor = newVisitor;
-}
-
 void Visitor::setLockCV(Lock* newCarLock, Condition* newCarCV){
 	carLock = newCarLock;
 	carCV = newCarCV;

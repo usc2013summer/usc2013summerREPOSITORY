@@ -5,11 +5,12 @@
 
 class Driver{
 	private:
-		Driver* driver;
 		int driverID;
 		int carID;
 		int visitorNum;
 		int count;
+		int myValet;
+		int myToken;
 		char* carModel;
 		Lock* carLock;
 		Condition* carCV;
@@ -18,7 +19,8 @@ class Driver{
 	public:
 		// Constructor, Setter, Getter
 		Driver(int);
-		void setDriver(Driver*);
+		void setMyValet(int);
+		void setMyToken(int);
 		void setLockCV(Lock*, Condition*);
 		void setLineLock(Lock*);
 		void setVisitorNum(int);
@@ -26,11 +28,13 @@ class Driver{
 		void setCarID(int);
 		void setValetQ(List*);
 		int getCarID();
-		
+		char* getCarModel();
+		int getDriverID();
 		
 		// Actions
 		void arrived();
 		void tellVisitorsGetOut();
+		void playMuseum();
 		
 		// By Other Threads
 		void oneVisitorOutFromCar();
