@@ -194,7 +194,6 @@ void Condition::Wait(Lock* conditionLock) {
 		(void) interrupt->SetLevel(oldLevel);	// R.I.
 		return;
 	}
-	
 	conditionLock->Release();
 	queue->Append((void *)currentThread);
 	currentThread->Sleep();

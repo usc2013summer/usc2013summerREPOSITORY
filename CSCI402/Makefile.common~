@@ -49,9 +49,9 @@ THREAD_H =../threads/copyright.h\
 	../machine/sysdep.h\
 	../machine/stats.h\
 	../machine/timer.h\
-	../threads/valet.h\
 	../threads/visitor.h\
-	../threads/driver.h
+	../threads/driver.h\
+	../threads/valet.h
 
 THREAD_C =../threads/main.cc\
 	../threads/list.cc\
@@ -74,7 +74,8 @@ THREAD_C =../threads/main.cc\
 THREAD_S = ../threads/switch.s
 
 THREAD_O =main.o list.o scheduler.o synch.o synchlist.o system.o thread.o \
-	utility.o threadtest.o interrupt.o stats.o sysdep.o timer.o problem2.o visitor.o driver.o valet.o
+	utility.o threadtest.o interrupt.o stats.o sysdep.o timer.o problem2.o \
+	visitor.o driver.o valet.o
 
 USERPROG_H = ../userprog/addrspace.h\
 	../userprog/bitmap.h\
