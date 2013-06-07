@@ -69,7 +69,7 @@ THREAD_C =../threads/main.cc\
 	../threads/problem2.cc\
 	../threads/visitor.cc\
 	../threads/driver.cc\
-	../threads/Valet.cc\
+	../threads/Valet.cpp\
 	../threads/shared.cc
 
 THREAD_S = ../threads/switch.s
