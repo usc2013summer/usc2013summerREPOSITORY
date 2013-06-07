@@ -41,6 +41,7 @@ void Problem2(){
 			visitor->setVisitor(visitor);
 			visitor->setLockCV(carLock, carCV);
 			visitor->setMyDriver(driver);
+			visitor->setVisitorID(visitorNum);
 				
 			t = new Thread("THREAD");
 			t->Fork(visitorThread, (int)visitor);

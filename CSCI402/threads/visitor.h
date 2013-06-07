@@ -7,6 +7,7 @@
 class Visitor{
 	private:
 		int visitorID;
+		int groupID;
 		int myTicketTakerID;
 		Lock* carLock;
 		Condition* carCV;
@@ -18,6 +19,10 @@ class Visitor{
 		void setLockCV(Lock*, Condition*);
 		void setMyDriver(Driver*);
 		void setMyTicketTakerID(int);
+		void setVisitorID(int);
+		void setGroupID(int);
+		int getVisitorID();
+		int getGroupID(int);
 		
 		// Action
 		void stayInCar();
